@@ -1,0 +1,40 @@
+@import models.purchase.PurchaseOrder
+@import java.util.List
+@import models.product.Product
+@import models.product.ProductOrder
+@(purchaseOrders: List[PurchaseOrder])
+
+@import helper._
+
+
+@main {
+
+    <h1>Your purchase history</h1>
+
+
+
+    <table class="computers zebra-striped">
+        <thead>
+            <tr>
+                <th>Order:</th>
+                <th>Ship to:</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @for(order <- purchaseOrders) {
+            <tr>
+                <td>
+                @for(i <- 0 until order.productOrders.size()) {
+                    @Product.find.byId(order.productOrders.get(i).productId).name
+                    }
+                    </td>
+                <td>@order.getAddress()</td>
+                <td><a class="btn primary" href = "@routes.PurchaseController.modify(order.id)">Modify</a></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <a class="btn primary" href = "@routes.ProductController.index()">Back</a>
+}

@@ -1,0 +1,35 @@
+@import models.product.ProductOrder
+@import models.product.Product
+@import java.util.List
+@(productOrder: List[ProductOrder])
+
+@import helper._
+
+@import b3.vertical.fieldConstructor
+
+
+@main {
+
+    <h1>Your software inventory</h1>
+
+
+
+    <table class="computers zebra-striped">
+        <thead>
+            <tr>
+                <th>Product:</th>
+                <th>Status:</th>
+            </tr>
+        </thead>
+        <tbody>
+        @for(order <- productOrder) {
+            <tr>
+                <td>@Product.find.byId(order.productId).name</td>
+                <td>@order.status.getStatus()</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <a class="btn primary" href = "@routes.ProductController.index()">Back</a>
+}

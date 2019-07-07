@@ -1,0 +1,42 @@
+@import models.question.QuestionReceiveCenter
+@import models.product.Product
+@import java.util.List
+@(questionReceiver: QuestionReceiveCenter)
+
+@import helper._
+
+@import b3.vertical.fieldConstructor
+
+
+@main {
+
+    <h1>All questions from other customers</h1>
+
+
+
+    <table class="computers zebra-striped">
+        <thead>
+            <tr>
+                <th>Question:</th>
+                <th>About product name:</th>
+                <th>From:</th>
+                <th>Options:</th>
+            </tr>
+        </thead>
+        <tbody>
+        @for(question <- questionReceiver.questions) {
+            <tr>
+                <td>@question.content</td>
+                <td>@Product.find.byId(question.productID).name</td>
+                <td>@question.poster.userEmail</td>
+                <td>
+                    <a class="btn default" href="@routes.QuestionController.answerQuestion(question.id)">Answer questions</a>
+                    <a class="btn default" href="@routes.QuestionController.passQuestion(question.id)">Pass questions</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+@*TODO: Add answer function or pass function*@
+    <a class="btn primary" href = "@routes.ProductController.index()">Back</a>
+}

@@ -1,0 +1,39 @@
+@import models.users.Developer
+@import models.product.Product
+@(id: Long, productForm: Form[Product])
+
+@import helper._
+
+@import b3.vertical.fieldConstructor  // Declares a vertical field constructor as default
+
+@main {
+
+    <h1>Edit Product</h1>
+
+    @b3.form(routes.ProductController.update(id)) {
+
+        <fieldset>
+
+            @b3.text(productForm("name"), '_label -> "Product name", '_help -> "")
+
+            @b3.select(
+                productForm("product.id"),
+                options(Developer.options),
+                '_label -> "Developer", '_default -> "-- Choose a developer --",
+                '_showConstraints -> false
+            )
+
+        </fieldset>
+
+        <div class="actions">
+            <input type="submit" value="Save this product" class="btn primary"> or
+            <a href="@routes.ProductController.view()" class="btn">Cancel</a>
+        </div>
+
+    }
+
+    @b3.form(routes.ProductController.delete(id), 'class -> "topRight") {
+        <input type="submit" value="Delete this product" class="btn danger">
+    }
+
+}

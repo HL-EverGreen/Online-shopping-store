@@ -1,0 +1,35 @@
+@import models.product.Product
+@import java.util.List
+@(products: List[Product])
+
+@import helper._
+
+@import b3.vertical.fieldConstructor
+
+
+@main {
+
+    <h1>Your software product list</h1>
+
+
+
+    <table class="computers zebra-striped">
+        <thead>
+            <tr>
+                <th>Product:</th>
+            </tr>
+        </thead>
+        <tbody>
+        @for(product <- products) {
+            <tr>
+                <td>@product.name</td>
+                <td><a class="btn default" href="@routes.ProductController.viewCustomerOfProduct(product.id)">Send out the messages to all customers</a></td>
+                <td><a class="btn default" href="@routes.ProductController.giveOutCoupons(product.id)">Give out coupons to all customers</a></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <a class="btn success" id="add" href="@routes.ProductController.create()">Add a new product</a>
+    <a class="btn primary" href = "@routes.ProductController.index()">Back</a>
+}

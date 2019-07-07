@@ -1,0 +1,51 @@
+@import models.users.UserInfo
+@import models.product.Product
+@import models.coupons.Coupons
+@import java.util.List
+@(customers: List[UserInfo], product: Product, messageForm: Form[Coupons])
+
+@import helper._
+
+@import b3.vertical.fieldConstructor
+
+
+@main {
+
+    <h1>All customers bought @product.name</h1>
+
+
+    <table class="computers zebra-striped">
+        <thead>
+            <tr>
+                <th>Customers:</th>
+            </tr>
+        </thead>
+        <tbody>
+        @for(customer <- customers) {
+            <tr>
+                <td>@customer.emailID</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    @b3.form(routes.CouponController.notifyAllCustomer(product.id)) {
+
+        <fieldset>
+        @b3.select(messageForm("couponprice"),
+            options = Seq(
+                "20%" -> "20%",
+                "40%" -> "40%",
+                "60%" -> "60%"
+            ),
+            '_label -> "The coupon discount: ", '_default -> "-- Choose a discount --",
+            '_help -> "")
+        </fieldset>
+
+        <div class="actions">
+            <input type="submit" value="Send coupons to all customers" class="btn primary"> or
+            <a class="btn primary" href = "@routes.ProductController.index()">Back</a>
+        </div>
+
+    }
+}

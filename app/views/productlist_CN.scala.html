@@ -1,0 +1,177 @@
+@import helper._
+@import b3.vertical.fieldConstructor
+@import models.product.Product
+@import models.product.ProductOrder
+@(currentPage: com.avaje.ebean.PagedList[Product], currentSortBy: String, currentOrder: String, currentFilter: String, orderForm: Form[ProductOrder])
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(newPage:Int, newSortBy:String) = @{
+
+    var sortBy = currentSortBy
+    var order = currentOrder
+
+    if(newSortBy != null) {
+        sortBy = newSortBy
+        if(currentSortBy == newSortBy) {
+            if(currentOrder == "asc") {
+                order = "desc"
+            } else {
+                order = "asc"
+            }
+        } else {
+            order = "asc"
+        }
+    }
+
+    // Generate the link
+    routes.ProductController.view(newPage, sortBy, order, currentFilter)
+
+}
+
+
+    @**********************************
+    * Helper generating table headers *
+    ***********************************@
+@header(key:String, title:String) = {
+    <th class="@key.replace(".","_") header @if(currentSortBy == key) @{if(currentOrder == "asc") "headerSortDown" else "headerSortUp"}">
+        <a href="@link(0, key)">@title</a>
+    </th>
+}
+
+@main {
+    @if(session().containsKey("email")) {
+        <div style="float: right">
+            @if(session().containsKey("username")) {
+                <span style="font-size: large">欢迎! @session().get("type") : @session().get("username") </span>
+            } else {
+                <span style="font-size: large">欢迎！ @session().get("type") : @session().get("email") </span>
+            }
+                &nbsp;&nbsp;
+            <a class="btn default" href = "@routes.UserController.logout()">登出</a>
+        </div>
+    } else {
+        <a class="btn default" href = "@routes.UserController.login()" style="float: right">注册 / 登录</a>
+    }
+    <h1 id="homeTitle">@Messages("products.list.title", currentPage.getTotalRowCount)</h1>
+
+    @if(flash.containsKey("success")) {
+        <div class="alert-message warning">
+            <strong>完成!</strong> @flash.get("success")
+        </div>
+    }
+
+    <div id="actions">
+
+        <form action="@link(0, "name")" method="GET">
+            <input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by product name...">
+            <input type="submit" id="searchsubmit" value="Filter by name" class="btn primary">
+        </form>
+        @if(session().containsKey("type") && session().get("type").equals("Developer")) {
+            <a class="btn default" href="@routes.ProductController.viewOwnProduct()">你的产品</a>
+            <a class="btn success" id="add" href="@routes.ProductController.create()">增加新的产品</a>
+        }
+        @if(session().containsKey("type") && session().get("type").equals("Customer")) {
+            <a class="btn default" href="@routes.ProductController.viewInventory()">仓库</a>
+            <a class="btn default" href="@routes.MessageController.viewNotifications()">通知</a>
+            <a class="btn default" href="@routes.QuestionController.postQuestion()">提问</a>
+            <a class="btn default" href="@routes.QuestionController.viewPostedQuestion()">我的问题</a>
+            <a class="btn default" href="@routes.QuestionController.viewQuestion()">别人的问题</a>
+        }
+    </div>
+
+    @if(session().containsKey("type") && session().get("type").equals("Customer")){
+        <div align="right">
+            <a class="btn success" id="add" href="@routes.PurchaseController.createForms()">购物车</a>
+            <a class="btn success" id="hist" href="@routes.PlaceOrderController.viewHistory()">购买历史</a>
+        </div>
+    }
+
+    <p></p>
+
+    @if(currentPage.getTotalRowCount == 0) {
+
+        <div class="well">
+            <em>无</em>
+        </div>
+
+    } else {
+
+        <table class="computers zebra-striped">
+            <thead>
+                <tr>
+                    @header("name", "Product name")
+                    @header("developer.name", "Developer")
+                    @header("price", "Price")
+                    @if(session().containsKey("type") && session().get("type").equals("Customer")){
+                        @header("review", "Reviews")
+                        @header("cart", "Cart")
+                    }
+                </tr>
+            </thead>
+            <tbody>
+
+
+            @for(product <- currentPage.getList) {
+                <tr>
+                    <td>
+                            <!-- TODO: create cartcontroller and use a fucntion routes.CartController.add(product.id) -->
+                        <a href="@routes.ProductController.edit(product.id)">@product.name</a>
+                    </td>
+                    <td>
+                    @if(product.developer == null) {
+                        <em>-</em>
+                    } else {
+                        @product.developer.name
+                    }
+                    </td>
+                    <td>
+                    @product.price
+                    </td>
+                    @if(session().containsKey("type") && session().get("type").equals("Customer")){
+                        <td>
+                            <a class="btn primary" href="@routes.ProductController.makeComment(product.id)">评论</a>
+                            <a class="btn primary" href="@routes.ProductController.viewComment(product.id)">其他评论</a>
+                        </td>
+                        <td>
+                            <a class="btn success" id="purchase" href="@routes.ProductController.addProductToCart(product.id)">加入购物车</a>
+                        </td>
+                    }
+                </tr>
+            }
+
+            </tbody>
+        </table>
+
+        <div id="pagination" class="pagination">
+            <ul>
+                @if(currentPage.hasPrev) {
+                    <li class="prev">
+                        <a href="@link(currentPage.getPageIndex - 1, null)">&larr; Previous</a>
+                    </li>
+                } else {
+                    <li class="prev disabled">
+                        <a>&larr; Previous</a>
+                    </li>
+                }
+                <li class="current">
+                    <a>Displaying @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
+                </li>
+                @if(currentPage.hasNext) {
+                    <li class="next">
+                        <a href="@link(currentPage.getPageIndex + 1, null)">Next &rarr;</a>
+                    </li>
+                } else {
+                    <li class="next disabled">
+                        <a>Next &rarr;</a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+    }
+
+}
+
+

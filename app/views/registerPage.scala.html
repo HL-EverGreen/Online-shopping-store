@@ -1,0 +1,39 @@
+@import models.users.UserInfo
+@(registerForm : Form[UserInfo])
+
+
+@import helper._
+
+@import b3.vertical.fieldConstructor
+
+@main {
+
+    <h1>Register</h1>
+    @if(registerForm.hasGlobalErrors) {
+        <p class = "error">@registerForm.globalError.message()</p>
+    }
+    @b3.form(routes.UserController.doRegister()) {
+
+        <fieldset>
+            @b3.text(registerForm("name"), '_label -> "Username:", '_help -> "", '_showErrors -> true)
+            @b3.text(registerForm("emailID"), '_label -> "Email:", '_help -> "", '_showErrors -> true)
+            @b3.password(registerForm("password"), '_label -> "Password:", '_help -> "", '_showErrors -> true)
+            @b3.select(
+                registerForm("type"),
+                options = Seq(
+                    "Customer" -> "Customer",
+                    "Developer" -> "Developer"
+                ),
+                '_label -> "User Role", '_default -> "-- Choose a user type --",
+                '_showConstraints -> false
+            )
+        </fieldset>
+
+        <div class="actions">
+            <input type="submit" value="Register" class="btn primary"> &nbsp;&nbsp;
+            <a href="@routes.UserController.login()" class="btn">Already has an account? Sign in here</a>
+        </div>
+
+    }
+
+}

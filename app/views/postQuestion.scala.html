@@ -1,0 +1,35 @@
+@import models.question.Question
+@import models.product.Product
+@(postQuestionForm : Form[Question], message : String)
+
+@import helper._
+
+@import b3.vertical.fieldConstructor
+
+@main {
+
+    <h1>Post question about any product!</h1>
+
+    @b3.form(routes.QuestionController.saveQuestion()) {
+
+        <fieldset>
+            @b3.text(postQuestionForm("content"), '_label -> "Your question:", '_help -> "")
+            @b3.select(
+                postQuestionForm("productID"),
+                options(Product.options),
+                '_label -> "The product you question is about:", '_default -> "-- Choose a product --",
+                '_showConstraints -> false
+            )
+
+        </fieldset>
+        @if(message != "default") {
+            <div><span>@message</span></div>
+        }
+        <div class="actions">
+            <input type="submit" value="Post this question" class="btn primary"> or
+            <a href="@routes.ProductController.index()" class="btn">Cancel</a>
+        </div>
+
+    }
+
+}

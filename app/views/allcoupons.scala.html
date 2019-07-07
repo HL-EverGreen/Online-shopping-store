@@ -1,0 +1,35 @@
+@import models.coupons.CouponReceiveCenter
+@import java.util.List
+@(couponReceiver: CouponReceiveCenter)
+
+@import helper._
+
+@import b3.vertical.fieldConstructor
+
+
+@main {
+
+    <h1>All coupons</h1>
+
+
+    <table class="computers zebra-striped">
+        <thead>
+            <tr>
+                <th>Coupon:</th>
+                <th>Product:</th>
+                <th>From:</th>
+            </tr>
+        </thead>
+        <tbody>
+        @for(coupon <- couponReceiver.couponToUser) {
+            <tr>
+                <td>@coupon.couponprice</td>
+                <td>@coupon.sender.productID</td>
+                <td>@coupon.sender.userEmail</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <a class="btn primary" href = "@routes.ProductController.index()">Back</a>
+}

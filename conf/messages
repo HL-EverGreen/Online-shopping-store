@@ -1,0 +1,5 @@
+# Messages
+
+products.list.title={0,choice,0#No products|1#One product|1<{0,number,integer} products} found
+
+

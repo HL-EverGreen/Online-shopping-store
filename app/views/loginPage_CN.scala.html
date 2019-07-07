@@ -1,0 +1,37 @@
+@import models.users.UserInfo
+@(loginForm : Form[UserInfo])
+
+@import helper._
+
+@import b3.vertical.fieldConstructor
+
+@main {
+
+    <h1>登录</h1>
+    <a href="@routes.UserController.login()" class="btn">English</a>
+    <a href="@routes.UserController.login_CN()" class="btn">简体中文</a>
+    @b3.form(routes.UserController.doLogin()) {
+
+        <fieldset>
+            @b3.text(loginForm("emailID"), '_label -> "电子邮箱:", '_help -> "", '_showErrors -> true)
+            @b3.password(loginForm("password"), '_label -> "密码:", '_help -> "", '_showErrors -> true)
+            @b3.select(
+                loginForm("type"),
+                options = Seq(
+                    "Customer" -> "Customer",
+                    "Developer" -> "Developer"
+                ),
+                '_label -> "用户", '_default -> "-- 选择用户类型 --",
+                '_showConstraints -> false
+            )
+
+        </fieldset>
+
+        <div class="actions">
+            <input type="submit" value="登录" class="btn primary"> &nbsp;&nbsp;
+            <a href="@routes.UserController.register()" class="btn">新用户? 点击这里注册!</a>
+        </div>
+
+    }
+
+}

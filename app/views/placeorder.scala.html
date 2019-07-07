@@ -1,0 +1,79 @@
+@import models.payment.CreditCard
+@import models.purchase.PurchaseOrder
+@import models.product.ProductOrder
+@import models.product.Product
+
+@(creditForm: Form[CreditCard], originPrice: Double, totalPrice: Double, discountedPrice: Double, purchaseOrderID: Long, productOrders: List[ProductOrder])
+
+    @import b3.vertical.fieldConstructor
+    @import helper._
+
+    @main {
+        @if(flash.containsKey("success")) {
+            <div class="alert-message warning">
+                <strong>Done!</strong> @flash.get("success")
+            </div>
+        }
+
+        <br>
+
+        <h2> Product order Details </h2>
+
+        @if(productOrders != null) {
+            <table class="computers zebra-striped">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Product Developer</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Delivery Option</th>
+                        <th>Coupon Discount</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                @for(productOrder <- productOrders) {
+                    <tr>
+                        <td>
+                        @Product.find.byId(productOrder.productId).name
+                        </td>
+                        <td>@Product.find.byId(productOrder.productId).developer.name</td>
+                        <td>@ProductOrder.find.byId(productOrder.id).quantity</td>
+                        <td>@Product.find.byId(productOrder.productId).price</td>
+                        <td>@ProductOrder.find.byId(productOrder.id).delivery</td>
+                        <td>@ProductOrder.find.byId(productOrder.id).coupon</td>
+                        <td>
+                            <a class="btn danger" id="remove" href="@routes.PurchaseController.removeOrder(productOrder.id)">Remove From Cart</a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+
+        <br>
+        <br>
+
+        @b3.form(routes.PlaceOrderController.createVisaForm(purchaseOrderID)) {
+
+            <h2>Order Cost</h2>
+            <h3> Total Payment : @originPrice</h3>
+            <h3> Total Payment (after applied the coupon): @totalPrice</h3>
+
+            <h3> Total Payment after Discount : @discountedPrice </h3>
+
+            <br>
+            <br>
+            <br>
+
+
+            <h2> Finish payment and place order</h2>
+
+            <div class="actions">
+                <input type="submit" value="VISA" class="btn primary"> or
+                <a href="@routes.ProductController.view()" class="btn">Cancel</a>
+            </div>
+
+        }
+    }

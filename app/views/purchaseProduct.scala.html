@@ -1,0 +1,130 @@
+@import models.payment.CreditCard
+@import models.delivery.Delivery
+@import models.product.ProductOrder
+@import models.product.Product
+
+@import models.coupons.CouponReceiveCenter
+
+@(products: List[Product], productOrders: List[ProductOrder], couponReceiver: CouponReceiveCenter, gift_card: String)
+@implicitFieldConstructor = @{ b3.vertical.fieldConstructor }
+@main {
+    <form action="@routes.PurchaseController.selectCountries()" method="POST">
+        <select name="countries">
+            <option value="usa">USA</option>
+            <option value="china">China</option>
+            <option value="japan">Japan</option>
+        </select>
+        <input type="submit" value="Select Country" class="btn primary">
+    </form>
+
+    @if(flash.containsKey("success")) {
+        <div class="alert-message warning">
+            <strong>Done!</strong> @flash.get("success")
+        </div>
+    }
+    <h1>Shopping Cart</h1>
+    @if(session().containsKey("type") && session().get("type").equals("Customer")){
+        <a class="btn default" href="@routes.CouponController.viewCoupons()">View All Coupons</a>
+    }
+
+    <h2> Update quantity and delivery option </h2>
+
+    @if(products != null) {
+        <table class="computers zebra-striped">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Product Developer</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+        @for(product <- products) {
+            <tr>
+                <td>
+                    @Product.find.byId(product.id).name
+                </td>
+                <td>@Product.find.byId(product.id).developer.name</td>
+                <td>@Product.find.byId(product.id).price</td>
+                <td>
+                    <form action="@routes.ProductController.createOrder(product.id)" method="POST">
+                        <input type="number" name="quantity" min="0" max="100" step="1" value="0">
+                        <select name="delivery">
+                            <option value="online">Online</option>
+                            <option value="dvd">DVD</option>
+                            <option value="download">Download</option>
+                        </select>
+
+                        @if(session().containsKey("type") && session().get("type").equals("Customer")){
+                            <select name="coupon">
+                                <option selected value="No discount">Choose a discount</option>
+                                @for(coupon <- couponReceiver.couponToUser){
+                                    @if(coupon.sender.productID.equals(Product.find.byId(product.id).name)){
+                                        <option value=@coupon.couponprice> @coupon.couponprice</option>
+                                    }
+                                }
+
+                            </select>
+                        }
+                        <input type="submit" value="Update cart" class="btn primary">
+                    </form>
+                </td>
+            </tr>
+        }
+            </tbody>
+        </table>
+    }
+
+    <h2> Shopping cart Details </h2>
+
+    @if(productOrders != null) {
+        <table class="computers zebra-striped">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Product Developer</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Delivery Option</th>
+                    <th>Coupon Discount</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @for(productOrder <- productOrders) {
+                <tr>
+                    <td>
+                        @Product.find.byId(productOrder.productId).name
+                    </td>
+                    <td>@Product.find.byId(productOrder.productId).developer.name</td>
+                    <td>@ProductOrder.find.byId(productOrder.id).quantity</td>
+                    <td>@Product.find.byId(productOrder.productId).price</td>
+                    <td>@ProductOrder.find.byId(productOrder.id).delivery</td>
+                    <td>@ProductOrder.find.byId(productOrder.id).coupon</td>
+                    <td>
+                        <a class="btn danger" id="remove" href="@routes.PurchaseController.removeOrder(productOrder.id)">Remove From Cart</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+
+    @b3.form(routes.PurchaseController.save()) {
+
+        <h3><input type="checkbox" name="isSpecial" value="true"> Super fast delivery <br></h3>
+        @if(!gift_card.equals("")){
+            <h3><input type="checkbox" name="giftcard" value="true"> Apply gift card from @gift_card <br></h3>
+        }
+
+
+        <div class="actions">
+            <input type="submit" value="Checkout" class="btn success"> or
+            <a href="@routes.ProductController.view()" class="btn">Cancel</a>
+        </div>
+
+    }
+
+}

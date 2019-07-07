@@ -1,0 +1,32 @@
+@import models.comment.Comment
+@import java.util.List
+@(comments: List[Comment])
+
+@import helper._
+
+@import b3.vertical.fieldConstructor
+
+
+@main {
+
+    <h1>Comments of product</h1>
+
+
+
+    <table class="computers zebra-striped">
+        <thead>
+            <tr>
+                <th>Comment:</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for(comment <- comments) {
+                <tr>
+                    <td>@comment.content</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a class="btn primary" href = "@routes.ProductController.index()">Back</a>
+}

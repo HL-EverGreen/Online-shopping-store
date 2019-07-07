@@ -1,0 +1,100 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+# Import Secure routes
+
+# Login/sign-up
+GET     /login                      controllers.UserController.login()
+GET     /login_CN                   controllers.UserController.login_CN()
+POST    /login                      controllers.UserController.doLogin()
+GET     /signup                     controllers.UserController.register()
+POST    /signup                     controllers.UserController.doRegister()
+GET     /logout                     controllers.UserController.logout()
+
+
+# Default path will just redirect to the computer list
+GET     /                           controllers.ProductController.index()
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+GET     /products                   controllers.ProductController.view(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
+
+# Add Product
+GET     /products/new              controllers.ProductController.create()
+POST    /products                   controllers.ProductController.save()
+
+# Edit existing product
+GET     /product/:id              controllers.ProductController.edit(id:Long)
+POST    /product/:id              controllers.ProductController.update(id:Long)
+
+# Post comment on product
+GET     /product/:id/comment              controllers.ProductController.makeComment(id:Long)
+POST    /product/:id/comment              controllers.ProductController.saveComment(id:Long)
+GET     /product/:id/view-comment         controllers.ProductController.viewComment(id:Long)
+
+# View developer's own software product
+GET     /products/view-own              controllers.ProductController.viewOwnProduct()
+
+# View customer's own inventory
+GET     /products/view-inventory              controllers.ProductController.viewInventory()
+
+# View all customers who bought a product
+GET     /products/:id/view-customer      controllers.ProductController.viewCustomerOfProduct(id:Long)
+
+POST    /products/:id/send-message-to-all  controllers.MessageController.notifyAllCustomer(id:Long)
+
+# Send coupons to all customers who bought the product
+GET     /products/:id/give-out-coupons      controllers.ProductController.giveOutCoupons(id:Long)
+
+POST    /products/:id/send-coupons-to-all  controllers.CouponController.notifyAllCustomer(id:Long)
+
+# Delete a product
+POST    /products/:id/delete       controllers.ProductController.delete(id:Long)
+
+# Do the purchase
+#POST    /purchase/:id               controllers.PurchaseController.purchase(id: Long)
+GET      /purchase/new                  controllers.PurchaseController.createForms()
+POST      /purchase/applycard            controllers.PurchaseController.selectCountries()
+POST     /purchase                      controllers.PurchaseController.save()
+
+GET     /products/:id                   controllers.ProductController.addProductToCart(id: Long)
+GET     /purchase/:id                   controllers.PurchaseController.removeProductFromCart(id: Long)
+GET     /removeorder/:id                controllers.PurchaseController.removeOrder(id: Long)
+
+GET      /shoppingcart                      controllers.CartController.create()
+POST     /shoppingcart                  controllers.CartController.save(id:Long)
+
+GET      /placeorder/:id                    controllers.PlaceOrderController.createForms(id:Long)
+POST      /placeorder                    controllers.PlaceOrderController.save(purchaseOrderID:Long)
+
+POST      /createorder/:id               controllers.ProductController.createOrder(id:Long)
+GET       /visa/:id                     controllers.PlaceOrderController.createVisaForm(id:Long)
+
+# View all notifications from developers
+GET      /notification                   controllers.MessageController.viewNotifications()
+
+# View all coupons from developers
+GET      /allcoupons                     controllers.CouponController.viewCoupons()
+
+# Post and save question
+GET      /question                       controllers.QuestionController.postQuestion()
+POST     /question                       controllers.QuestionController.saveQuestion()
+
+# View other's questions
+GET      /question-view                       controllers.QuestionController.viewQuestion()
+
+# View self posted questions
+GET      /question-view-self                       controllers.QuestionController.viewPostedQuestion()
+
+# Answer other's questions
+GET      /question-answer/:id                       controllers.QuestionController.answerQuestion(id:Long)
+POST     /question-answer-save/:id                  controllers.QuestionController.saveAnswerToQuestion(id:Long)
+
+# Forward other's questions
+GET      /question-forward/:id                      controllers.QuestionController.passQuestion(id:Long)
+
+# View customer's own inventory
+GET     /purchases/view-history                       controllers.PlaceOrderController.viewHistory()
+
+GET     /purchases/:id                               controllers.PurchaseController.modify(id: Long)

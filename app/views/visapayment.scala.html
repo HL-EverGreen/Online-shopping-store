@@ -1,0 +1,36 @@
+@import models.payment.CreditCard
+@import models.purchase.PurchaseOrder
+@import models.product.ProductOrder
+@import models.product.Product
+
+@(creditForm: Form[CreditCard], originPrice: Double, totalPrice: Double, discountedPrice: Double, purchaseOrderID: Long, productOrders: List[ProductOrder])
+
+@import b3.vertical.fieldConstructor
+@import helper._
+
+@main {
+    @b3.form(routes.PlaceOrderController.save(purchaseOrderID)) {
+
+    <h1> Visa Payment Service </h1>
+        <fieldset>
+            <h3>Shipping Information</h3>
+            @b3.text(creditForm("full_name"), '_label -> "Full Name  ", '_help -> "")
+            @b3.text(creditForm("address"), '_label -> "Adress  ", '_help -> "")
+            @b3.text(creditForm("city"), '_label -> "City  ", '_help -> "")
+            @b3.text(creditForm("state"), '_label -> "State/Province/Region  ", '_help -> "")
+            @b3.text(creditForm("zip"), '_label -> "ZIP  ", '_help -> "")
+            @b3.text(creditForm("country"), '_label -> "Country/Region  ", '_help -> "")
+            @b3.text(creditForm("phone"), '_label -> "Phone number  ", '_help -> "")
+            <h3>Payment Information</h3>
+            @b3.text(creditForm("name"), '_label -> "Name On the Card  ", '_help -> "")
+            @b3.text(creditForm("number"), '_label -> "Card Number  ", '_help -> "")
+            @b3.text(creditForm("cvv"), '_label -> "CVV  ", '_help -> "")
+        </fieldset>
+
+        <div class="actions">
+            <input type="submit" value="Make Payment" class="btn primary"> or
+            <a href="@routes.ProductController.view()" class="btn">Cancel</a>
+        </div>
+    }
+
+}

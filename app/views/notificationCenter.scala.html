@@ -1,0 +1,34 @@
+@import models.notification.NotificationReceiveCenter
+@import java.util.List
+@(messageReceiver: NotificationReceiveCenter)
+
+@import helper._
+
+@import b3.vertical.fieldConstructor
+
+
+@main {
+
+    <h1>All messages from developer</h1>
+
+
+
+    <table class="computers zebra-striped">
+        <thead>
+            <tr>
+                <th>Message:</th>
+                <th>From:</th>
+            </tr>
+        </thead>
+        <tbody>
+        @for(message <- messageReceiver.messageToUser) {
+            <tr>
+                <td>@message.content</td>
+                <td>@message.sender.userEmail</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <a class="btn primary" href = "@routes.ProductController.index()">Back</a>
+}
