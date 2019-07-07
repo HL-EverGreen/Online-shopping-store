@@ -1,4 +1,4 @@
-# Software Store Application - 18653 Team Project
+# Software Store Application
 
 This is a Play application for a Software Store that uses Java, and communicates with an in memory database using EBean.
 
